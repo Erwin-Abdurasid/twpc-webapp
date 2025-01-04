@@ -1,0 +1,20 @@
+﻿@inherits DisplayProductsBase
+@inject ILocalCurrencyService lc
+
+@foreach (var item in Products)
+{
+    <div class="col-md-3 mb-2">
+        <a href="/product/@item.Id">
+            <div class="card">
+                <img class="img-thumbnail" src="@item.ImageUrl"
+                     alt="@item.Name" />
+                <div class="card-body">
+                    <h5 class="card-title mb-3">@item.Name</h5>
+                    <p class="card-text">
+                        <b>@lc.CurrencyTranslate(item.Price, "C2")</b>
+                    </p>
+                </div>
+            </div>
+        </a>
+    </div>
+}

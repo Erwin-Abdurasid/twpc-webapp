@@ -1,0 +1,66 @@
+﻿@page "/shopping-cart"
+@inherits ShoppingCartBase
+@inject ILocalCurrencyService lc
+
+@if (CartItems == null && ErrorMessage == null)
+{
+    <DisplaySpinner/>
+}
+else if (ErrorMessage != null)
+{
+    <DisplayError Message="@ErrorMessage"></DisplayError>
+}
+else
+{
+    <h3 class="mb-5">Shopping Cart</h3>
+
+    @if (CartItems.Count() <= 0)
+    {
+        <h4>There are currently no items in your Shopping Cart.</h4>
+    }
+    else
+    {
+        <div class="row mb-5">
+            <div class="col-md-9">
+                @foreach (var item in CartItems)
+                {
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <img src="@item.ProductImageUrl" width="300" class="img-thumbnail"
+                                 alt="@item.ProductName" />
+                        </div>
+                        <div class="col-md-8">
+                            <h5>@item.ProductName</h5>
+                            <div class="mb-4">@item.ProductDescription</div>
+                            <span>
+                                Price: <b>@lc.CurrencyTranslate(item.ProductPrice, "C2")</b>
+                                <input @oninput="(() => UpdateQty_input(item.Id))"
+                                    type="number" @bind="item.Qty" />
+                                <button data-id="@item.Id"
+                                    class="btn btn-info btn-sm update-qty"
+                                    title="Update Cart Item Quantity"
+                                    @onclick="(() => UpdateItemQty_Click(item.Id, item.Qty))">Update Qty</button>
+                            </span>
+                            <div>
+                                <button @onclick="(() => DeleteItem_Click(item.Id))"
+                                    class="btn btn-danger sm"><img width="20" height="20" src="/resources/icons/trash.svg" 
+                                        title="Remove Item" alt="Remove"/></button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-md-3">
+                <h5>Cart Summary</h5>
+                <div class="mt-2">
+                    <div>Total - (@TotalQuantity items)
+                        <b>@lc.CurrencyTranslate(TotalPrice, "C2")</b>
+                    </div>
+                    <a href="checkout" class="btn btn-success" title="Proceed to Checkout">
+                        <span class="oi oi-credit-card"></span>&nbsp; Checkout
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+}
